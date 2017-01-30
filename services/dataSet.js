@@ -2,7 +2,7 @@
 * @Author: herby
 * @Date:   2017-01-28 15:01:32
 * @Last Modified by:   Stefan Wirth
-* @Last Modified time: 2017-01-30 12:03:34
+* @Last Modified time: 2017-01-30 12:44:45
 */
 
 'use strict';
@@ -124,7 +124,7 @@ function getImagesWithData(limit) {
     })
     .then(function(imagesWithData) {
         const imagePromises = imagesWithData.map(function(image) {
-            //batch get item didn't work so doing 1 single queries instread...
+            //batch get item didn't work so doing 10 single queries instread...
             return new Promise(function(resolve, reject) {
                 client.get({
                     TableName: DATA_SET_WITH_IMAGE_TABLE_NAME,
