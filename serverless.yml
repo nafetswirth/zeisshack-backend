@@ -1,0 +1,135 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: dashboard-api # NOTE: update this with your service name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+
+# you can overwrite defaults here
+#  stage: dev
+  region: eu-west-1
+
+  iamRoleStatements: # permissions for all of your functions can be set here
+    - Effect: Allow
+      Action: # Gives permission to DynamoDB tables in a specific region
+        - dynamodb:Query
+        - dynamodb:Scan 
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource: "arn:aws:dynamodb:eu-west-1:*:*"
+
+functions:
+  saveDataSet:
+    handler: handler.saveDataSet
+    events: 
+      - http: 
+          path: dataSet
+          method: post
+      - sns: saveDataSet
+  getCurrentDataSet:
+    handler: handler.getCurrentDataSet
+    events:
+      - http: 
+          path: dataSet/current
+          method: get
+  getPicturesWithData: 
+    handler: handler.getPicturesWithData
+    events: 
+      - http: 
+          path: pictureDataSet
+          method: get
+  savePictureWithData: 
+    handler: handler.savePictureWithData
+    events:
+      - s3:
+          bucket: microscopephotos
+          event: s3:ObjectCreated:*  
+  processSaveDataSet:
+    handler: handler.processSaveDataSet
+    events:
+      - stream: arn:aws:dynamodb:eu-west-1:481381250659:table/microscopeDataSet/stream/2017-01-28T21:12:26.801
+
+# you can add CloudFormation resource templates here
+resources:
+  Resources:
+    NewResource:
+       Type: AWS::DynamoDB::Table
+       Properties:
+        TableName: microscopeDataSet
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: 'N'
+          - AttributeName: customerId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes: 
+          - IndexName: index
+            KeySchema: 
+            - AttributeName: customerId
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+            Projection: 
+              ProjectionType: KEYS_ONLY
+            ProvisionedThroughput:
+              ReadCapacityUnits: 2
+              WriteCapacityUnits: 2
+        ProvisionedThroughput:
+          ReadCapacityUnits: 2
+          WriteCapacityUnits: 2
+    MicroscopePicture:
+      Type: AWS::DynamoDB::Table
+      Properties:
+       TableName: microscopePicture
+       AttributeDefinitions:
+         - AttributeName: id
+           AttributeType: S
+         - AttributeName: createdAt
+           AttributeType: 'N'
+         - AttributeName: customerId
+           AttributeType: S
+       KeySchema:
+         - AttributeName: id
+           KeyType: HASH
+       GlobalSecondaryIndexes: 
+         - IndexName: pictureCreatedAt
+           KeySchema: 
+           - AttributeName: customerId
+             KeyType: HASH
+           - AttributeName: createdAt
+             KeyType: RANGE
+           Projection: 
+             ProjectionType: KEYS_ONLY
+           ProvisionedThroughput:
+             ReadCapacityUnits: 2
+             WriteCapacityUnits: 2
+       ProvisionedThroughput:
+         ReadCapacityUnits: 2
+         WriteCapacityUnits: 2
+
+package:
+  exclude:
+    - fileServer/**
+    - imageProcessServer/**
+    - node_modules/aws-sdk/**
+    - mqttServer/**

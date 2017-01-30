@@ -1,0 +1,38 @@
+{
+    "Records": [
+        {
+            "eventVersion": "2.0",
+            "eventSource": "aws:s3",
+            "awsRegion": "eu-west-1",
+            "eventTime": "2017-01-28T18:37:57.279Z",
+            "eventName": "ObjectCreated:Put",
+            "userIdentity": {
+                "principalId": "AWS:AIDAJNBM274CO5JP27SEE"
+            },
+            "requestParameters": {
+                "sourceIPAddress": "37.82.88.107"
+            },
+            "responseElements": {
+                "x-amz-request-id": "308DB53293893711",
+                "x-amz-id-2": "sWobOS0jrTP8d4MKfl18pPRKXTS1U3THa8wnO0wgqee81d+K8DLT0ICsUjf8E2HY"
+            },
+            "s3": {
+                "s3SchemaVersion": "1.0",
+                "configurationId": "26d6e9ba-0598-4d35-9a6a-6de8cc67ce60",
+                "bucket": {
+                    "name": "microscopephotos",
+                    "ownerIdentity": {
+                        "principalId": "AK25BLD1DYKNE"
+                    },
+                    "arn": "arn:aws:s3:::microscopephotos"
+                },
+                "object": {
+                    "key": "Group+2%402x.png",
+                    "size": 3636,
+                    "eTag": "44e61eb4a7d9683311333337c640154b",
+                    "sequencer": "00588CE5053C7CB17C"
+                }
+            }
+        }
+    ]
+}
